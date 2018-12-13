@@ -6,8 +6,6 @@
 
 using namespace std;
 
-
-const bool DEBUG = false; 
 const long long mypow10[] = {(long long)1, (long long)1e1, (long long)1e2, (long long)1e3, (long long)1e4, (long long)1e5, (long long)1e6, (long long)1e7, (long long)1e8, (long long)1e9, (long long)1e10, (long long)1e11, (long long)1e12, (long long)1e13, (long long)1e14, (long long)1e15};
 
 
@@ -19,12 +17,9 @@ struct number{
 };
 
 
-const long long MAX_BASE = (long long)1e13;
-
-int numDigits(long long number)
-{
+int numDigits(long long number){
     int digits = 0;
-    if (number < 0) digits = 1; // remove this line if '-' counts as a digit
+    if(number == 0) return 1;
     while (number) {
         number /= 10;
         digits++;
@@ -71,11 +66,6 @@ number increment(long long prefix, number const & last){
     if(prefix == last.base)
         return normalize(a, len(last) + 1);
     
-    if(DEBUG){
-        printf("diff: %lld | a:%lld\n", diff, a);
-        printf("diff_digits: %d\n", diff_digits);
-    }
-    
     if ( diff + 1 != mypow10[diff_digits] ) // (67999, 1, 9), 67 -> (67000, 2, 0)  
         return number(a + diff + 1, last.zeroes_added, 0);
   
@@ -84,10 +74,9 @@ number increment(long long prefix, number const & last){
 
 
 number new_last(int a, number const & last){
-    if( is_prefix(a, last.base) ){
-        // printf("is_prefix(%d, %lld)\n",a, last.base);
+    if( is_prefix(a, last.base) )
         return increment(a, last);
-    }
+    
     if( lexcomp(a, last.base) ) // if a < last.base (filled with 0s)
         return normalize(a, len(last) + 1);
     return normalize(a, len(last)); // if a > last.base (filled with 0s)
@@ -104,15 +93,12 @@ int main(){
     number last_number = number(a, 0, 0);
     n--;
 
-    if(DEBUG) printf("%lld\n", a);
+    
     while(n--){
         cin >> a;
-        if(DEBUG) printf("processing %lld\n", a);
         number new_number = new_last(a, last_number);
-        if(DEBUG) printf("%lld e%d+%d\n", new_number.base, new_number.zeroes_added, new_number.counter);
         res += len(new_number) - numDigits(a);
         last_number = new_number;
-        if(DEBUG) printf("\n");
     }
 
     cout << res << '\n';
