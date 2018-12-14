@@ -8,17 +8,6 @@ const long long M = 100000007;
 
 // H(s) = s_0*1 + s_1*p^1 + s_2*p^2 ... s_n*p^n
 
-long long fast_pow(long long base, long long power, long long modulus){
-    long long result = 1;
-    while(power > 0){
-        if(power & 1 == 1){
-            result = (result * base) % modulus;
-        }
-        power >>= 1;
-        base = ( base*base ) % modulus;
-    }
-    return result;
-}
 
 // H(c + s) = c + H(s)*p
 long long add_front(long long hash, char ch){
@@ -26,8 +15,8 @@ long long add_front(long long hash, char ch){
 }
 
 // H(s + c) = H(s) + c*p^s.length
-int add_back(long long hash, char ch, int length){
-    return (hash + (long long)ch*fast_pow(p, length, M)) % M;
+int add_back(long long hash, char ch, long long fastpow){
+    return (hash + (long long)ch*fastpow) % M;
 }
 
 
@@ -43,11 +32,13 @@ int main(){
     while(c < 'a' || c > 'z')
         c = getchar();
     long long hash1=0, hash2=0;
+    long long fastpow = 1;
 
     while ( c >= 'a' && c <= 'z' ) {
         hash1 = add_front(hash1, c);
-        hash2 = add_back(hash2, c, n);
+        hash2 = add_back(hash2, c, fastpow);
         c=getchar();
+        fastpow = (fastpow * p) % M;
         n++;
     }
 
